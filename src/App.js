@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 
+import TodoStore from "./stores/TodoStore";
 import TodoList from "./components/TodoList";
+import TodoActions from "./actions/TodoActions";
 
 class App extends Component {
   constructor(props) {
@@ -8,9 +10,10 @@ class App extends Component {
 
     this.state = {
       title: "",
-      todos: [],
+      todos: TodoStore.getAll(),
     };
 
+    this._onChange = this._onChange.bind(this);
     this._onChangeTitle = this._onChangeTitle.bind(this);
     this._onClickAdd = this._onClickAdd.bind(this);
     this._onEnterPressAdd = this._onEnterPressAdd.bind(this);
@@ -18,29 +21,21 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const todos = localStorage.getItem("et-todos");
-
-    if (!todos) {
-      return;
-    }
-
-    this.setState({
-      todos: JSON.parse(todos),
-    });
+    TodoStore.addChangeListener(this._onChange);
   }
 
-  componentDidUpdate() {
-    localStorage.setItem("et-todos", JSON.stringify(this.state.todos));
+  componentWillUnmount() {
+    TodoStore.removeChangeListener(this._onChange);
+  }
+
+  _onChange() {
+    this.setState({
+      todos: TodoStore.getAll(),
+    });
   }
 
   _onCompleteTodo(id) {
-    const { todos } = this.state;
-
-    todos[id].complete = !todos[id].complete;
-
-    this.setState({
-      todos,
-    });
+    TodoActions.complete(id);
   }
 
   _onChangeTitle(event) {
@@ -59,17 +54,8 @@ class App extends Component {
   }
 
   _onClickAdd(event) {
-    const { title, todos } = this.state;
-
-    todos.push({
-      title,
-      compete: false,
-    });
-
-    this.setState({
-      title: "",
-      todos,
-    });
+    TodoActions.create(this.state.title);
+    this.setState({ title: "" });
   }
 
   _renderHeader() {
@@ -116,15 +102,18 @@ class App extends Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col col-md-6 offset-md-3 mt-2">
+          <div className="col col-md-8 offset-md-2 mt-2">
             <div className="todos-app card">
               {this._renderHeader()}
               <div className="card-body">
-                <TodoList
-                  todos={todos}
-                  onComplete={this._onCompleteTodo}
-                  onDelete={this._onDeleteTodo}
-                />
+                {Object.keys(todos).length > 0 ? (
+                  <TodoList
+                    todos={todos}
+                    onComplete={this._onCompleteTodo}
+                  />
+                ) : (
+                  <p className="error">No saved ToDos found.</p>
+                )}
               </div>
             </div>
           </div>
