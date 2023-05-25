@@ -19,9 +19,28 @@ code {
   text-align: center;
 }
 
+.todo-item-delete-icon {
+  height: 40px;
+  width: 20px;
+}
+
+.todo-item-delete-icon {
+  cursor: pointer;
+  height: 40px;
+  width: 28px;
+}
+
+.todo-item-delete-icon:hover {
+  background-color: #ddd;
+}
+
 ul.list-group.todo-list {
   height: 80vh;
   overflow-y: auto;
+}
+
+.editable-content {
+  cursor: pointer;
 }
 
 div.todo-item__checkbox input[type="checkbox"]:focus {

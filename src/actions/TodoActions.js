@@ -13,10 +13,30 @@ const TodoActions = {
   },
   /**
    * @param {string} id
+   * @param {string} title
+   */
+  update: function (id, title) {
+    ETDispatcher.dispatch({
+      actionType: TodoConstants.TODO_UPDATE,
+      id: id,
+      title: title,
+    });
+  },
+  /**
+   * @param {string} id
    */
   complete: function (id) {
     ETDispatcher.dispatch({
       actionType: TodoConstants.TODO_COMPLETE,
+      id: id,
+    });
+  },
+  /**
+   * @param {string} id
+   */
+  destroy: function (id) {
+    ETDispatcher.dispatch({
+      actionType: TodoConstants.TODO_DESTROY,
       id: id,
     });
   },
