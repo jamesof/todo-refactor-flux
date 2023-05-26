@@ -1,6 +1,7 @@
 import React from "react";
 
 import Editable from "./Editable";
+import TodoActions from "../actions/TodoActions";
 
 class TodoItem extends React.Component {
   constructor(props) {
@@ -34,10 +35,10 @@ class TodoItem extends React.Component {
           `Continue to update from:\n${this.props.title}\nTO:\n${this.state.editedTitle}`
         )
       ) {
-        const { id, onSaveTodoEdit } = this.props;
+        const { id } = this.props;
         const { editedTitle } = this.state;
 
-        onSaveTodoEdit(id, editedTitle);
+        TodoActions.update(id, editedTitle);
       } else {
         this.setState({
           editedTitle: this.props.title,
@@ -47,9 +48,9 @@ class TodoItem extends React.Component {
   }
 
   _onCompleteCheck(event) {
-    const { id, onComplete } = this.props;
+    const { id } = this.props;
 
-    onComplete(id);
+    TodoActions.complete(id);
   }
 
   _onDeleteTodo(event) {
@@ -58,8 +59,9 @@ class TodoItem extends React.Component {
         `Are you sure you want to delete the item: ${this.props.title}?\n\nThis action is NOT reversible!!!`
       )
     ) {
-      const { id, onDeleteTodo } = this.props;
-      onDeleteTodo(id);
+      const { id } = this.props;
+
+      TodoActions.destroy(id);
     }
   }
 
