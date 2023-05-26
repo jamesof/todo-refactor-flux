@@ -11,12 +11,18 @@ class App extends Component {
     this.state = {
       title: "",
       todos: TodoStore.getAll(),
+      filterByCompleteState: null,
     };
 
     this._onChange = this._onChange.bind(this);
     this._onChangeTitle = this._onChangeTitle.bind(this);
     this._onClickAdd = this._onClickAdd.bind(this);
     this._onEnterPressAdd = this._onEnterPressAdd.bind(this);
+    this._filterByCompleteState = this._filterByCompleteState.bind(this);
+
+    this._todosCount = this._todosCount.bind(this);
+    this._completeCount = this._completeCount.bind(this);
+    this._inCompleteCount = this._inCompleteCount.bind(this);
   }
 
   componentDidMount() {
@@ -29,7 +35,7 @@ class App extends Component {
 
   _onChange() {
     this.setState({
-      todos: TodoStore.getAll(),
+      todos: TodoStore.getAll(this.state.filterByCompleteState),
     });
   }
 
@@ -51,6 +57,25 @@ class App extends Component {
   _onClickAdd(event) {
     TodoActions.create(this.state.title);
     this.setState({ title: "" });
+  }
+
+  _filterByCompleteState(completeState) {
+    this.setState({
+      filterByCompleteState: completeState,
+      todos: TodoStore.getAll(completeState),
+    });
+  }
+
+  _todosCount() {
+    return TodoStore.todosCount();
+  }
+
+  _completeCount() {
+    return TodoStore.completeCount();
+  }
+
+  _inCompleteCount() {
+    return TodoStore.inCompleteCount();
   }
 
   _renderHeader() {
@@ -92,7 +117,8 @@ class App extends Component {
   }
 
   render() {
-    const { todos } = this.state;
+    const { todos, filterByCompleteState } = this.state;
+    const noTodosFound = Object.keys(todos).length === 0;
 
     return (
       <div className="container">
@@ -101,10 +127,43 @@ class App extends Component {
             <div className="todos-app card">
               {this._renderHeader()}
               <div className="card-body">
-                {Object.keys(todos).length > 0 ? (
-                  <TodoList todos={todos} />
+                <div className="filter-by-complete">
+                  <span
+                    onClick={() => this._filterByCompleteState(null)}
+                    className={`${
+                      filterByCompleteState === null ? "active" : ""
+                    } filter`}
+                  >
+                    All ({this._todosCount()})
+                  </span>
+                  <span
+                    onClick={() => this._filterByCompleteState(true)}
+                    className={`${
+                      filterByCompleteState === true ? "active" : ""
+                    } filter`}
+                  >
+                    Complete ({this._completeCount()})
+                  </span>
+                  <span
+                    onClick={() => this._filterByCompleteState(false)}
+                    className={`${
+                      filterByCompleteState === false ? "active" : ""
+                    } filter`}
+                  >
+                    InComplete ({this._inCompleteCount()})
+                  </span>
+                </div>
+
+                {noTodosFound ? (
+                  filterByCompleteState === null ? (
+                    <p className="error">No saved ToDos found.</p>
+                  ) : (
+                    <p className="error">
+                      No saved ToDos found matching selected filter.
+                    </p>
+                  )
                 ) : (
-                  <p className="error">No saved ToDos found.</p>
+                  <TodoList todos={todos} />
                 )}
               </div>
             </div>
