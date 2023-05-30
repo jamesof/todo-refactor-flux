@@ -17,7 +17,6 @@ class App extends Component {
     this._onChangeTitle = this._onChangeTitle.bind(this);
     this._onClickAdd = this._onClickAdd.bind(this);
     this._onEnterPressAdd = this._onEnterPressAdd.bind(this);
-    this._onCompleteTodo = this._onCompleteTodo.bind(this);
   }
 
   componentDidMount() {
@@ -32,14 +31,6 @@ class App extends Component {
     this.setState({
       todos: TodoStore.getAll(),
     });
-  }
-
-  _onCompleteTodo(id) {
-    TodoActions.complete(id);
-  }
-
-  _onDeleteTodo(id) {
-    TodoActions.destroy(id);
   }
 
   _onChangeTitle(event) {
@@ -60,10 +51,6 @@ class App extends Component {
   _onClickAdd(event) {
     TodoActions.create(this.state.title);
     this.setState({ title: "" });
-  }
-
-  _onSaveTodoEdit(id, editedTitle) {
-    TodoActions.update(id, editedTitle);
   }
 
   _renderHeader() {
@@ -115,12 +102,7 @@ class App extends Component {
               {this._renderHeader()}
               <div className="card-body">
                 {Object.keys(todos).length > 0 ? (
-                  <TodoList
-                    todos={todos}
-                    onComplete={this._onCompleteTodo}
-                    onDelete={this._onDeleteTodo}
-                    onSaveTodoEdit={this._onSaveTodoEdit}
-                  />
+                  <TodoList todos={todos} />
                 ) : (
                   <p className="error">No saved ToDos found.</p>
                 )}
