@@ -46,3 +46,21 @@ ul.list-group.todo-list {
 div.todo-item__checkbox input[type="checkbox"]:focus {
   box-shadow: none;
 }
+
+.filter-by-complete {
+  border-radius: 15px;
+  border: 1px solid gray;
+  cursor: pointer;
+  margin: 0 20%;
+  text-align: center;
+}
+
+.filter-by-complete .filter {
+  margin: 0 3px;
+}
+
+.filter-by-complete .active {
+  border-radius: 15px;
+  background-color: #2196F3;
+  padding: 3px;
+}

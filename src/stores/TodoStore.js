@@ -1,4 +1,5 @@
 import { ulid } from "ulid";
+import filter from "lodash/filter";
 import EventEmitter from "events";
 
 import * as TodoConstants from "../constants/TodoConstants";
@@ -75,10 +76,39 @@ function complete(id) {
 let TodoStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * Get the entire collection of ToDos.
+   * @param null|true|false pass null to get all ToDos. Pass a boolean to filter by complete state. Defaults to null.
    * @return {object}
    */
-  getAll: function () {
+  getAll: function (complete = null) {
+    if (complete === true || complete === false) {
+      return filter(_todos, (todo) => todo.complete === complete);
+    }
+
     return _todos;
+  },
+
+  /**
+   * Get the number of all ToDos.
+   * @return {int}
+   */
+  todosCount: function () {
+    return Object.keys(_todos).length;
+  },
+
+  /**
+   * Get the number of completed ToDos.
+   * @return {int}
+   */
+  completeCount: function () {
+    return Object.keys(filter(_todos, (todo) => todo.complete)).length;
+  },
+
+  /**
+   * Get the number of incomplete ToDos.
+   * @return {int}
+   */
+  inCompleteCount: function () {
+    return Object.keys(filter(_todos, (todo) => !todo.complete)).length;
   },
 
   emitChange: function () {
