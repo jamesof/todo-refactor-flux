@@ -38,6 +38,10 @@ class App extends Component {
     TodoActions.complete(id);
   }
 
+  _onDeleteTodo(id) {
+    TodoActions.destroy(id);
+  }
+
   _onChangeTitle(event) {
     const target = event.target;
     const value = target.value;
@@ -56,6 +60,10 @@ class App extends Component {
   _onClickAdd(event) {
     TodoActions.create(this.state.title);
     this.setState({ title: "" });
+  }
+
+  _onSaveTodoEdit(id, editedTitle) {
+    TodoActions.update(id, editedTitle);
   }
 
   _renderHeader() {
@@ -110,6 +118,8 @@ class App extends Component {
                   <TodoList
                     todos={todos}
                     onComplete={this._onCompleteTodo}
+                    onDelete={this._onDeleteTodo}
+                    onSaveTodoEdit={this._onSaveTodoEdit}
                   />
                 ) : (
                   <p className="error">No saved ToDos found.</p>

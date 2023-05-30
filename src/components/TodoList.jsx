@@ -13,6 +13,8 @@ class TodoList extends React.Component {
           id={todo.id}
           {...todo}
           onComplete={this.props.onComplete}
+          onDeleteTodo={this.props.onDelete}
+          onSaveTodoEdit={this.props.onSaveTodoEdit}
         />
       );
     });

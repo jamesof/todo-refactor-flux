@@ -42,6 +42,27 @@ function create(title) {
 }
 
 /**
+ * Create a ToDo item.
+ * @param {string} id The id of the ToDo item
+ * @param {string} title The updated content of the ToDo item
+ */
+function update(id, title) {
+  _todos[id].title = title;
+
+  perisitToLocalStorage();
+}
+
+/**
+ * Delete a ToDo item.
+ * @param {string} id
+ */
+function destroy(id) {
+  delete _todos[id];
+
+  perisitToLocalStorage();
+}
+
+/**
  * Update completed status of a ToDo item.
  * @param {string} id The id of the ToDo item
  */
@@ -90,6 +111,30 @@ let TodoStore = Object.assign({}, EventEmitter.prototype, {
           }
         } else {
           console.error("Invalid todo title provided: ", payload.title);
+        }
+        break;
+      case TodoConstants.TODO_UPDATE:
+        if (payload.id && payload.title) {
+          const title = payload.title.trim();
+
+          if (title !== "") {
+            update(payload.id, title);
+            TodoStore.emitChange();
+          }
+        } else {
+          console.error(
+            "Invalid todo title or ID provided for updating: ",
+            payload.id,
+            payload.title
+          );
+        }
+        break;
+      case TodoConstants.TODO_DESTROY:
+        if (payload.id) {
+          destroy(payload.id);
+          TodoStore.emitChange();
+        } else {
+          console.error("Invalid todo ID provided for deleting: ", payload.id);
         }
         break;
       case TodoConstants.TODO_COMPLETE:
