@@ -1,8 +1,8 @@
 import React, { Component } from "react";
+import { dispatch, select, subscribe } from "@wordpress/data";
 
-import TodoStore from "./stores/TodoStore";
 import TodoList from "./components/TodoList";
-import TodoActions from "./actions/TodoActions";
+import { store as todoStore } from "./stores/TodoStore";
 
 class App extends Component {
   constructor(props) {
@@ -10,32 +10,29 @@ class App extends Component {
 
     this.state = {
       title: "",
-      todos: TodoStore.getAll(),
+      todos: select(todoStore).getAll(),
       filterByCompleteState: null,
     };
 
+    this.unsubscribe = null;
     this._onChange = this._onChange.bind(this);
     this._onChangeTitle = this._onChangeTitle.bind(this);
     this._onClickAdd = this._onClickAdd.bind(this);
     this._onEnterPressAdd = this._onEnterPressAdd.bind(this);
     this._filterByCompleteState = this._filterByCompleteState.bind(this);
-
-    this._todosCount = this._todosCount.bind(this);
-    this._completeCount = this._completeCount.bind(this);
-    this._inCompleteCount = this._inCompleteCount.bind(this);
   }
 
   componentDidMount() {
-    TodoStore.addChangeListener(this._onChange);
+    this.unsubscribe = subscribe(this._onChange);
   }
 
   componentWillUnmount() {
-    TodoStore.removeChangeListener(this._onChange);
+    this.unsubscribe();
   }
 
   _onChange() {
     this.setState({
-      todos: TodoStore.getAll(this.state.filterByCompleteState),
+      todos: select(todoStore).getAll(this.state.filterByCompleteState),
     });
   }
 
@@ -55,27 +52,16 @@ class App extends Component {
   }
 
   _onClickAdd(event) {
-    TodoActions.create(this.state.title);
+    dispatch(todoStore).create(this.state.title);
+
     this.setState({ title: "" });
   }
 
   _filterByCompleteState(completeState) {
     this.setState({
       filterByCompleteState: completeState,
-      todos: TodoStore.getAll(completeState),
+      todos: select(todoStore).getAll(completeState),
     });
-  }
-
-  _todosCount() {
-    return TodoStore.todosCount();
-  }
-
-  _completeCount() {
-    return TodoStore.completeCount();
-  }
-
-  _inCompleteCount() {
-    return TodoStore.inCompleteCount();
   }
 
   _renderHeader() {
@@ -134,7 +120,7 @@ class App extends Component {
                       filterByCompleteState === null ? "active" : ""
                     } filter`}
                   >
-                    All ({this._todosCount()})
+                    All ({select(todoStore).todosCount()})
                   </span>
                   <span
                     onClick={() => this._filterByCompleteState(true)}
@@ -142,7 +128,7 @@ class App extends Component {
                       filterByCompleteState === true ? "active" : ""
                     } filter`}
                   >
-                    Complete ({this._completeCount()})
+                    Complete ({select(todoStore).completeCount()})
                   </span>
                   <span
                     onClick={() => this._filterByCompleteState(false)}
@@ -150,7 +136,7 @@ class App extends Component {
                       filterByCompleteState === false ? "active" : ""
                     } filter`}
                   >
-                    InComplete ({this._inCompleteCount()})
+                    InComplete ({select(todoStore).inCompleteCount()})
                   </span>
                 </div>
 
