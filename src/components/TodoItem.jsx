@@ -1,7 +1,8 @@
 import React from "react";
+import { dispatch } from "@wordpress/data";
 
 import Editable from "./Editable";
-import TodoActions from "../actions/TodoActions";
+import { store as todoStore } from "../stores/TodoStore";
 
 class TodoItem extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class TodoItem extends React.Component {
         const { id } = this.props;
         const { editedTitle } = this.state;
 
-        TodoActions.update(id, editedTitle);
+        dispatch(todoStore).update(id, editedTitle);
       } else {
         this.setState({
           editedTitle: this.props.title,
@@ -50,7 +51,7 @@ class TodoItem extends React.Component {
   _onCompleteCheck(event) {
     const { id } = this.props;
 
-    TodoActions.complete(id);
+    dispatch(todoStore).complete(id);
   }
 
   _onDeleteTodo(event) {
@@ -61,7 +62,7 @@ class TodoItem extends React.Component {
     ) {
       const { id } = this.props;
 
-      TodoActions.destroy(id);
+      dispatch(todoStore).destroy(id);
     }
   }
 
